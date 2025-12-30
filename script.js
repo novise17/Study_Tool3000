@@ -172,3 +172,27 @@ window.addEventListener('load', () => {
   try { toggleBrownNoise(); } 
   catch(e) { console.log("AudioContext blocked until user interaction"); }
 });
+
+function showStats() {
+  let statsContent = document.getElementById("statsContent");
+  statsContent.innerHTML = ""; // clear previous stats
+
+  if (cards.length === 0) {
+    statsContent.innerHTML = "<p>No cards yet!</p>";
+    return;
+  }
+
+  // Prepare stats by subject
+  const subjects = [...new Set(cards.map(c => c.subject))];
+  subjects.forEach(subject => {
+    const subjectCards = cards.filter(c => c.subject === subject);
+    const total = subjectCards.length;
+    const due = subjectCards.filter(c => c.due <= Date.now()).length;
+    const efficiency = ((total - due) / total * 100).toFixed(1);
+
+    const div = document.createElement("div");
+    div.innerHTML = `<strong>${subject}</strong>: ${total} cards, ${due} due, Efficiency: ${efficiency}%`;
+    statsContent.appendChild(div);
+  });
+}
+
