@@ -29,43 +29,38 @@ function showTab(tabId) {
   tabs.forEach(t => t.classList.add('hidden'));
   document.getElementById(tabId).classList.remove('hidden');
 
-  // Hide card display if switching tabs
   if (tabId !== 'studyTab' && tabId !== 'quizTab') {
     document.getElementById('card').classList.add('hidden');
   }
 }
 
-// --- START STUDY SESSION ---
+// --- STUDY & QUIZ ---
 function startStudy() {
   const selected = document.getElementById("subjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
-  if (dueCards.length === 0) { alert("🎉 No cards due for this subject!"); return; }
+  if (dueCards.length === 0) { alert("🎉 No cards due!"); return; }
 
   currentCardIndex = 0;
   quizMode = false;
-
   document.getElementById("card").classList.remove("hidden");
   loadCard();
 }
 
-// --- START QUIZ MODE ---
 function startQuiz() {
   const selected = document.getElementById("quizSubjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
-  if (dueCards.length === 0) { alert("🎉 No cards due for this subject!"); return; }
+  if (dueCards.length === 0) { alert("🎉 No cards due!"); return; }
 
   currentCardIndex = 0;
   quizMode = true;
   quizScore = 0;
   quizTotal = dueCards.length;
-
   document.getElementById("card").classList.remove("hidden");
   loadCard();
 }
 
-// --- LOAD CARD ---
 function loadCard() {
   if (dueCards.length === 0) {
     document.getElementById("question").textContent = "🎉 No cards due today!";
@@ -86,14 +81,12 @@ function loadCard() {
   document.getElementById("showBtn").classList.remove("hidden");
 }
 
-// --- SHOW ANSWER ---
 function showAnswer() {
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("buttons").classList.remove("hidden");
   document.getElementById("showBtn").classList.add("hidden");
 }
 
-// --- RATE CARD ---
 function rateCard(rating) {
   let card = dueCards[currentCardIndex];
 
@@ -109,14 +102,14 @@ function rateCard(rating) {
 
   currentCardIndex++;
   if (currentCardIndex >= dueCards.length) {
-    if (quizMode) { alert(`🎉 Quiz finished!\nScore: ${quizScore} / ${quizTotal}`); quizMode = false; }
+    if (quizMode) alert(`🎉 Quiz finished!\nScore: ${quizScore}/${quizTotal}`);
     currentCardIndex = 0;
   }
 
   loadCard();
 }
 
-// --- ADD NEW CARD ---
+// --- ADD CARD ---
 function addCard() {
   const subject = document.getElementById("newSubject").value;
   const question = document.getElementById("newQuestion").value.trim();
@@ -124,8 +117,7 @@ function addCard() {
 
   if (!question || !answer) { alert("Please enter both question and answer."); return; }
 
-  const newCard = { subject, question, answer, interval: 1, due: Date.now() };
-  cards.push(newCard);
+  cards.push({ subject, question, answer, interval: 1, due: Date.now() });
   saveCards();
 
   document.getElementById("newQuestion").value = "";
@@ -133,7 +125,7 @@ function addCard() {
   document.getElementById("creatorMessage").textContent = "✅ Card added!";
 }
 
-// --- STATS DASHBOARD ---
+// --- STATS DASHBOARD WITH EFFICIENCY BARS ---
 function showStats() {
   let statsContent = document.getElementById("statsContent");
   statsContent.innerHTML = "";
@@ -152,6 +144,17 @@ function showStats() {
 
     const div = document.createElement("div");
     div.innerHTML = `<strong>${subject}</strong>: ${total} cards, ${due} due, Efficiency: ${efficiency}%`;
+
+    const barContainer = document.createElement("div");
+    barContainer.className = "efficiencyBarContainer";
+
+    const bar = document.createElement("div");
+    bar.className = "efficiencyBar";
+    bar.style.width = efficiency + "%";
+
+    barContainer.appendChild(bar);
+    div.appendChild(barContainer);
+
     statsContent.appendChild(div);
   });
 }
