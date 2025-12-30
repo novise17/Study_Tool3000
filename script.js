@@ -15,32 +15,36 @@ function loadCards() {
   const saved = localStorage.getItem("cards");
   if (saved) return JSON.parse(saved);
 
+  // Default due: tomorrow (not immediately due)
+  const tomorrow = Date.now() + 86400000;
   return [
-    { question: "What is a metaphor?", answer: "A comparison without using like or as", subject: "English Literature", interval: 1, due: Date.now() },
-    { question: "What is the quadratic formula?", answer: "x = (-b ± √(b²-4ac)) / 2a", subject: "Algebra 2 / Trig", interval: 1, due: Date.now() },
-    { question: "What does a for-loop do in Java?", answer: "Repeats a block of code a set number of times", subject: "AP CSA", interval: 1, due: Date.now() },
-    { question: "What is a list in Python?", answer: "An ordered, mutable collection", subject: "Python Programming", interval: 1, due: Date.now() }
+    { question: "What is a metaphor?", answer: "A comparison without using like or as", subject: "English Literature", interval: 1, due: tomorrow },
+    { question: "What is the quadratic formula?", answer: "x = (-b ± √(b²-4ac)) / 2a", subject: "Algebra 2 / Trig", interval: 1, due: tomorrow },
+    { question: "What does a for-loop do in Java?", answer: "Repeats a block of code a set number of times", subject: "AP CSA", interval: 1, due: tomorrow },
+    { question: "What is a list in Python?", answer: "An ordered, mutable collection", subject: "Python Programming", interval: 1, due: tomorrow }
   ];
 }
 
-// --- TAB FUNCTIONALITY ---
-function showTab(tabId, event) {
-  const tabs = document.querySelectorAll('.tabContent');
-  tabs.forEach(t => t.classList.add('hidden'));
-  document.getElementById(tabId).classList.remove('hidden');
-
+// --- TABS ---
+function initTabs() {
   const tabButtons = document.querySelectorAll('#tabs button');
-  tabButtons.forEach(b => b.classList.remove('activeTab'));
-  if(event) event.currentTarget.classList.add('activeTab');
-
-  document.getElementById('card').classList.add('hidden');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.getAttribute('data-tab');
+      document.querySelectorAll('.tabContent').forEach(t => t.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+      tabButtons.forEach(b => b.classList.remove('activeTab'));
+      btn.classList.add('activeTab');
+      if (tabId !== 'studyTab' && tabId !== 'quizTab') document.getElementById('card').classList.add('hidden');
+    });
+  });
 }
+window.addEventListener('DOMContentLoaded', initTabs);
 
 // --- STUDY & QUIZ ---
 function startStudy() {
   const selected = document.getElementById("subjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
-
   if (!dueCards.length) { alert("🎉 No cards due!"); return; }
   currentCardIndex = 0;
   quizMode = false;
@@ -51,7 +55,6 @@ function startStudy() {
 function startQuiz() {
   const selected = document.getElementById("quizSubjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
-
   if (!dueCards.length) { alert("🎉 No cards due!"); return; }
   currentCardIndex = 0;
   quizMode = true;
@@ -70,7 +73,6 @@ function loadCard() {
     document.getElementById("buttons").classList.add("hidden");
     return;
   }
-
   const card = dueCards[currentCardIndex];
   document.getElementById("subject").textContent = "📘 " + card.subject;
   document.getElementById("question").textContent = card.question;
@@ -97,7 +99,6 @@ function rateCard(rating) {
   } else {
     if (rating === "good" || rating === "easy") quizScore++;
   }
-
   currentCardIndex++;
   if (currentCardIndex >= dueCards.length) {
     if (quizMode) alert(`🎉 Quiz finished! Score: ${quizScore}/${quizTotal}`);
@@ -112,40 +113,34 @@ function addCard() {
   const question = document.getElementById("newQuestion").value.trim();
   const answer = document.getElementById("newAnswer").value.trim();
   if (!question || !answer) { alert("Please enter both question and answer."); return; }
-  cards.push({ subject, question, answer, interval: 1, due: Date.now() });
+  cards.push({ subject, question, answer, interval: 1, due: Date.now() + 86400000 });
   saveCards();
   document.getElementById("newQuestion").value = "";
   document.getElementById("newAnswer").value = "";
   document.getElementById("creatorMessage").textContent = "✅ Card added!";
 }
 
-// --- STATS DASHBOARD ---
+// --- STATS ---
 function showStats() {
   const statsContent = document.getElementById("statsContent");
   statsContent.innerHTML = "";
   if (!cards.length) { statsContent.innerHTML = "<p>No cards yet!</p>"; return; }
-
   const subjects = [...new Set(cards.map(c => c.subject))];
   subjects.forEach(subject => {
     const subjectCards = cards.filter(c => c.subject === subject);
     const total = subjectCards.length;
     const due = subjectCards.filter(c => c.due <= Date.now()).length;
     const efficiency = ((total - due) / total * 100).toFixed(1);
-
     const div = document.createElement("div");
     div.innerHTML = `<strong>${subject}</strong>: ${total} cards, ${due} due, Efficiency: ${efficiency}%`;
-
     const barContainer = document.createElement("div");
     barContainer.className = "efficiencyBarContainer";
-
     const bar = document.createElement("div");
     bar.className = "efficiencyBar";
     bar.style.width = efficiency + "%";
-
     if (efficiency >= 80) bar.style.background = "green";
     else if (efficiency >= 50) bar.style.background = "yellow";
     else bar.style.background = "red";
-
     barContainer.appendChild(bar);
     div.appendChild(barContainer);
     statsContent.appendChild(div);
@@ -158,7 +153,6 @@ function loadManageCards() {
   container.innerHTML = "";
   const subject = document.getElementById("manageSubjectSelect").value;
   const filtered = (subject === "all") ? cards : cards.filter(c => c.subject === subject);
-
   filtered.forEach((card, i) => {
     const div = document.createElement("div");
     div.className = "manageCardItem";
@@ -231,8 +225,3 @@ function toggleBrownNoise() {
     document.getElementById("toggleNoiseBtn").textContent = "🔊 Brown Noise";
   }
 }
-
-// --- AUTO PLAY BROWN NOISE ON LOAD (USER INTERACTION REQUIRED) ---
-window.addEventListener('click', () => {
-  if(!brownNoisePlaying) toggleBrownNoise();
-});
