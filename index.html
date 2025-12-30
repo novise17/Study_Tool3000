@@ -5,7 +5,7 @@
   <title>Study Tool 3000</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="dark">
 
   <h1>📚 Study Tool 3000</h1>
 
@@ -17,11 +17,11 @@
 
   <!-- NAVIGATION TABS -->
   <div id="tabs">
-    <button onclick="showTab('studyTab')" class="activeTab">📘 Study</button>
-    <button onclick="showTab('quizTab')">📝 Quiz</button>
-    <button onclick="showTab('createTab')">➕ Create Card</button>
-    <button onclick="showTab('statsTab')">📊 Stats</button>
-    <button onclick="showTab('manageTab')">🛠 Manage Cards</button>
+    <button onclick="showTab('studyTab', event)" class="activeTab">📘 Study</button>
+    <button onclick="showTab('quizTab', event)">📝 Quiz</button>
+    <button onclick="showTab('createTab', event)">➕ Create Card</button>
+    <button onclick="showTab('statsTab', event)">📊 Stats</button>
+    <button onclick="showTab('manageTab', event)">🛠 Manage Cards</button>
   </div>
 
   <!-- STUDY TAB -->
