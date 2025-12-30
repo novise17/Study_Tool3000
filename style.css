@@ -34,7 +34,7 @@ h1, h2 {
   color: black;
 }
 
-/* --- TABS --- */
+/* --- NAVIGATION TABS --- */
 #tabs {
   display: flex;
   justify-content: center;
@@ -74,7 +74,7 @@ h1, h2 {
 }
 
 /* --- CARDS & CREATOR --- */
-#card, #cardCreator, #statsDashboard, #manageCardsContainer {
+#card, #createTab, #statsTab, #manageTab {
   background: #222;
   border: 2px solid gold;
   border-radius: 12px;
@@ -84,7 +84,7 @@ h1, h2 {
   text-align: center;
 }
 
-#card p, #cardCreator label {
+#card p, #createTab label, #statsTab p {
   color: #fff;
 }
 
@@ -126,23 +126,6 @@ button {
   transition: width 0.5s;
 }
 
-/* --- DARK MODE --- */
-body.dark {
-  background: #121212;
-  color: #fff;
-}
-
-body.dark input, body.dark select {
-  background: #222;
-  color: gold;
-  border: 2px solid red;
-}
-
-body.dark #card, body.dark #cardCreator {
-  background: #222;
-  border-color: gold;
-}
-
 /* --- FLASHCARD MANAGEMENT --- */
 .manageCardItem {
   border: 1px solid red;
@@ -168,4 +151,28 @@ body.dark #card, body.dark #cardCreator {
 .manageCardItem button:hover {
   background: gold;
   color: black;
+}
+
+/* --- DARK MODE --- */
+body.dark {
+  background: #121212;
+  color: #fff;
+}
+
+body.dark input, body.dark select {
+  background: #222;
+  color: gold;
+  border: 2px solid red;
+}
+
+body.dark #card, body.dark #createTab, body.dark #statsTab, body.dark #manageTab {
+  background: #222;
+  border-color: gold;
+}
+
+/* --- STUDY/QUIZ CARD HIGHLIGHT --- */
+#card {
+  border-left: 5px solid red;
+  border-right: 5px solid gold;
+  padding: 25px;
 }
