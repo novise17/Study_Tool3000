@@ -1,3 +1,4 @@
+// --- SAVE & LOAD CARDS ---
 function saveCards() {
   localStorage.setItem("cards", JSON.stringify(cards));
 }
@@ -39,14 +40,42 @@ function loadCards() {
 }
 
 let cards = loadCards();
-let dueCards = cards.filter(c => c.due <= Date.now());
+let dueCards = [];
 let currentCardIndex = 0;
 
-loadCard();
+// --- START STUDY SESSION ---
+function startStudy() {
+  const selected = document.getElementById("subjectSelect").value;
 
+  if (selected === "all") {
+    dueCards = cards.filter(c => c.due <= Date.now());
+  } else {
+    dueCards = cards.filter(c => c.due <= Date.now() && c.subject === selected);
+  }
+
+  if (dueCards.length === 0) {
+    alert("🎉 No cards due for this subject!");
+    return;
+  }
+
+  currentCardIndex = 0;
+
+  // Hide menu, show card and buttons
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("card").classList.remove("hidden");
+  document.getElementById("showBtn").classList.remove("hidden");
+
+  loadCard();
+}
+
+// --- LOAD A CARD ---
 function loadCard() {
   if (dueCards.length === 0) {
     document.getElementById("question").textContent = "🎉 No cards due today!";
+    document.getElementById("subject").textContent = "";
+    document.getElementById("answer").textContent = "";
+    document.getElementById("showBtn").classList.add("hidden");
+    document.getElementById("buttons").classList.add("hidden");
     return;
   }
 
@@ -54,15 +83,21 @@ function loadCard() {
   document.getElementById("subject").textContent = "📘 " + card.subject;
   document.getElementById("question").textContent = card.question;
   document.getElementById("answer").textContent = card.answer;
+
+  // Hide answer and rating buttons until "Show Answer" is clicked
   document.getElementById("answer").classList.add("hidden");
   document.getElementById("buttons").classList.add("hidden");
+  document.getElementById("showBtn").classList.remove("hidden");
 }
 
+// --- SHOW ANSWER ---
 function showAnswer() {
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("buttons").classList.remove("hidden");
+  document.getElementById("showBtn").classList.add("hidden");
 }
 
+// --- RATE CARD ---
 function rateCard(rating) {
   let card = dueCards[currentCardIndex];
 
