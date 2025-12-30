@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Tool 3000</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>📚 Study Tool 3000</h1>
+
+  <div id="card">
+    <p id="subject"></p>
+    <p id="question"></p>
+    <p id="answer" class="hidden"></p>
+  </div>
+
+  <button onclick="showAnswer()">Show Answer</button>
+
+  <div id="buttons" class="hidden">
+    <button onclick="rateCard('again')">Again</button>
+    <button onclick="rateCard('good')">Good</button>
+    <button onclick="rateCard('easy')">Easy</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
