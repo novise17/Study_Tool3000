@@ -7,33 +7,60 @@
     <button id="toggleNoiseBtn" onclick="toggleBrownNoise()">🔊 Toggle Brown Noise</button>
   </div>
 
-  <!-- MAIN MENU -->
-  <div id="menu">
-    ...
+  <!-- NAVIGATION TABS -->
+  <div id="tabs">
+    <button onclick="showTab('study')">📘 Study</button>
+    <button onclick="showTab('quiz')">📝 Quiz</button>
+    <button onclick="showTab('create')">➕ Create Card</button>
+    <button onclick="showTab('stats')">📊 Stats</button>
+  </div>
+
+  <!-- STUDY MENU -->
+  <div id="study" class="tabContent">
+    <h2>📚 Choose a Subject</h2>
+    <select id="subjectSelect">
+      <option value="all">All Subjects</option>
+      <option value="English Literature">English Literature</option>
+      <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+      <option value="AP CSA">AP CSA</option>
+      <option value="Python Programming">Python Programming</option>
+    </select>
+    <br><br>
+    <button onclick="startStudy()">Start Studying</button>
+    <button onclick="startQuiz()">Start Quiz</button>
   </div>
 
   <!-- CARD DISPLAY -->
   <div id="card" class="hidden">
-    ...
-  </div>
-
-  <button id="showBtn" onclick="showAnswer()" class="hidden">Show Answer</button>
-
-  <div id="buttons" class="hidden">
-    ...
+    <p id="subject"></p>
+    <p id="question"></p>
+    <p id="answer" class="hidden"></p>
+    <button id="showBtn" onclick="showAnswer()">Show Answer</button>
+    <div id="buttons" class="hidden">
+      <button onclick="rateCard('again')">Again</button>
+      <button onclick="rateCard('good')">Good</button>
+      <button onclick="rateCard('easy')">Easy</button>
+    </div>
   </div>
 
   <!-- CARD CREATOR -->
-  <div id="cardCreator">
-    ...
-  </div>
-
-  <!-- STATS DASHBOARD -->
-  <div id="statsDashboard">
-    <h2>📊 Stats Dashboard</h2>
-    <button onclick="showStats()">Show My Stats</button>
-    <div id="statsContent"></div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+  <div id="create" class="tabContent hidden">
+    <h2>➕ Create a New Card</h2>
+    <label>
+      Subject:
+      <select id="newSubject">
+        <option value="English Literature">English Literature</option>
+        <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+        <option value="AP CSA">AP CSA</option>
+        <option value="Python Programming">Python Programming</option>
+      </select>
+    </label>
+    <br><br>
+    <label>
+      Question:
+      <input type="text" id="newQuestion" placeholder="Enter question" />
+    </label>
+    <br><br>
+    <label>
+      Answer:
+      <input type="text" id="newAnswe
