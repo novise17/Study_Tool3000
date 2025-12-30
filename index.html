@@ -9,7 +9,7 @@
 
   <h1>📚 Study Tool 3000</h1>
 
-  <!-- THEME TOGGLE & BROWN NOISE -->
+  <!-- TOP CONTROLS -->
   <div id="topControls">
     <button id="toggleNoiseBtn" onclick="toggleBrownNoise()">🔊 Brown Noise</button>
     <button id="toggleThemeBtn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
@@ -17,11 +17,11 @@
 
   <!-- NAVIGATION TABS -->
   <div id="tabs">
-    <button onclick="showTab('studyTab', event)" class="activeTab">📘 Study</button>
-    <button onclick="showTab('quizTab', event)">📝 Quiz</button>
-    <button onclick="showTab('createTab', event)">➕ Create Card</button>
-    <button onclick="showTab('statsTab', event)">📊 Stats</button>
-    <button onclick="showTab('manageTab', event)">🛠 Manage Cards</button>
+    <button data-tab="studyTab" class="activeTab">📘 Study</button>
+    <button data-tab="quizTab">📝 Quiz</button>
+    <button data-tab="createTab">➕ Create Card</button>
+    <button data-tab="statsTab">📊 Stats</button>
+    <button data-tab="manageTab">🛠 Manage Cards</button>
   </div>
 
   <!-- STUDY TAB -->
