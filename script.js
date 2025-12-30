@@ -23,6 +23,18 @@ function loadCards() {
   ];
 }
 
+// --- TAB FUNCTIONALITY ---
+function showTab(tabId) {
+  const tabs = document.querySelectorAll('.tabContent');
+  tabs.forEach(t => t.classList.add('hidden'));
+  document.getElementById(tabId).classList.remove('hidden');
+
+  // Hide card display if switching tabs
+  if (tabId !== 'studyTab' && tabId !== 'quizTab') {
+    document.getElementById('card').classList.add('hidden');
+  }
+}
+
 // --- START STUDY SESSION ---
 function startStudy() {
   const selected = document.getElementById("subjectSelect").value;
@@ -33,16 +45,13 @@ function startStudy() {
   currentCardIndex = 0;
   quizMode = false;
 
-  document.getElementById("menu").classList.add("hidden");
   document.getElementById("card").classList.remove("hidden");
-  document.getElementById("showBtn").classList.remove("hidden");
-
   loadCard();
 }
 
 // --- START QUIZ MODE ---
 function startQuiz() {
-  const selected = document.getElementById("subjectSelect").value;
+  const selected = document.getElementById("quizSubjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
   if (dueCards.length === 0) { alert("🎉 No cards due for this subject!"); return; }
@@ -52,10 +61,7 @@ function startQuiz() {
   quizScore = 0;
   quizTotal = dueCards.length;
 
-  document.getElementById("menu").classList.add("hidden");
   document.getElementById("card").classList.remove("hidden");
-  document.getElementById("showBtn").classList.remove("hidden");
-
   loadCard();
 }
 
@@ -125,9 +131,6 @@ function addCard() {
   document.getElementById("newQuestion").value = "";
   document.getElementById("newAnswer").value = "";
   document.getElementById("creatorMessage").textContent = "✅ Card added!";
-
-  const selected = document.getElementById("subjectSelect").value;
-  dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 }
 
 // --- STATS DASHBOARD ---
