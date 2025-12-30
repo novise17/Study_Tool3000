@@ -1,34 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Study Tool 3000</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Study Tool 3000</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="dark">
 
-  <h1>📚 Study Tool 3000</h1>
+<h1>📚 Study Tool 3000</h1>
 
-  <!-- TOP CONTROLS -->
-  <div id="topControls">
-    <button id="toggleNoiseBtn" onclick="toggleBrownNoise()">🔊 Brown Noise</button>
-    <button id="toggleThemeBtn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+<div id="topControls">
+  <button id="toggleNoiseBtn" onclick="toggleBrownNoise()">🔊 Brown Noise</button>
+  <button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+</div>
+
+<div id="tabs">
+  <button data-tab="studyTab" class="activeTab">📘 Study</button>
+  <button data-tab="quizTab">📝 Quiz</button>
+  <button data-tab="createTab">➕ Create Card</button>
+  <button data-tab="statsTab">📊 Stats</button>
+  <button data-tab="manageTab">🛠 Manage Cards</button>
+</div>
+
+<!-- STUDY TAB -->
+<div id="studyTab" class="tabContent active">
+  <h2>📚 Choose a Subject</h2>
+  <select id="subjectSelect">
+    <option value="all">All Subjects</option>
+    <option value="English Literature">English Literature</option>
+    <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+    <option value="AP CSA">AP CSA</option>
+    <option value="Python Programming">Python Programming</option>
+    <option value="Global History">Global History</option>
+    <option value="Italian">Italian</option>
+    <option value="AP Biology">AP Biology</option>
+  </select>
+  <br><br>
+  <button onclick="startStudy()">Start Studying</button>
+</div>
+
+<!-- QUIZ TAB -->
+<div id="quizTab" class="tabContent hidden">
+  <h2>📝 Quiz Mode</h2>
+  <select id="quizSubjectSelect">
+    <option value="all">All Subjects</option>
+    <option value="English Literature">English Literature</option>
+    <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+    <option value="AP CSA">AP CSA</option>
+    <option value="Python Programming">Python Programming</option>
+    <option value="Global History">Global History</option>
+    <option value="Italian">Italian</option>
+    <option value="AP Biology">AP Biology</option>
+  </select>
+  <br><br>
+  <button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<!-- CARD DISPLAY -->
+<div id="card" class="hidden">
+  <p id="subject"></p>
+  <p id="question"></p>
+  <p id="answer" class="hidden"></p>
+  <button id="showBtn" onclick="showAnswer()">Show Answer</button>
+  <div id="buttons" class="hidden">
+    <button onclick="rateCard('again')">Again</button>
+    <button onclick="rateCard('good')">Good</button>
+    <button onclick="rateCard('easy')">Easy</button>
   </div>
+</div>
 
-  <!-- NAVIGATION TABS -->
-  <div id="tabs">
-    <button data-tab="studyTab" class="activeTab">📘 Study</button>
-    <button data-tab="quizTab">📝 Quiz</button>
-    <button data-tab="createTab">➕ Create Card</button>
-    <button data-tab="statsTab">📊 Stats</button>
-    <button data-tab="manageTab">🛠 Manage Cards</button>
-  </div>
-
-  <!-- STUDY TAB -->
-  <div id="studyTab" class="tabContent active">
-    <h2>📚 Choose a Subject</h2>
-    <select id="subjectSelect">
-      <option value="all">All Subjects</option>
+<!-- CREATE CARD TAB -->
+<div id="createTab" class="tabContent hidden">
+  <h2>➕ Create a New Card</h2>
+  <label>Subject:
+    <select id="newSubject">
       <option value="English Literature">English Literature</option>
       <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
       <option value="AP CSA">AP CSA</option>
@@ -37,93 +82,39 @@
       <option value="Italian">Italian</option>
       <option value="AP Biology">AP Biology</option>
     </select>
-    <br><br>
-    <button onclick="startStudy()">Start Studying</button>
-  </div>
+  </label>
+  <br><br>
+  <label>Question: <input type="text" id="newQuestion" placeholder="Enter question" /></label>
+  <br><br>
+  <label>Answer: <input type="text" id="newAnswer" placeholder="Enter answer" /></label>
+  <br><br>
+  <button onclick="addCard()">Add Card</button>
+  <p id="creatorMessage" style="color: gold;"></p>
+</div>
 
-  <!-- QUIZ TAB -->
-  <div id="quizTab" class="tabContent hidden">
-    <h2>📝 Quiz Mode</h2>
-    <select id="quizSubjectSelect">
-      <option value="all">All Subjects</option>
-      <option value="English Literature">English Literature</option>
-      <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
-      <option value="AP CSA">AP CSA</option>
-      <option value="Python Programming">Python Programming</option>
-      <option value="Global History">Global History</option>
-      <option value="Italian">Italian</option>
-      <option value="AP Biology">AP Biology</option>
-    </select>
-    <br><br>
-    <button onclick="startQuiz()">Start Quiz</button>
-  </div>
+<!-- STATS TAB -->
+<div id="statsTab" class="tabContent hidden">
+  <h2>📊 Stats Dashboard</h2>
+  <button onclick="showStats()">Show My Stats</button>
+  <div id="statsContent"></div>
+</div>
 
-  <!-- CARD DISPLAY -->
-  <div id="card" class="hidden">
-    <p id="subject"></p>
-    <p id="question"></p>
-    <p id="answer" class="hidden"></p>
-    <button id="showBtn" onclick="showAnswer()">Show Answer</button>
-    <div id="buttons" class="hidden">
-      <button onclick="rateCard('again')">Again</button>
-      <button onclick="rateCard('good')">Good</button>
-      <button onclick="rateCard('easy')">Easy</button>
-    </div>
-  </div>
+<!-- MANAGE CARDS TAB -->
+<div id="manageTab" class="tabContent hidden">
+  <h2>🛠 Manage Flashcards</h2>
+  <select id="manageSubjectSelect" onchange="loadManageCards()">
+    <option value="all">All Subjects</option>
+    <option value="English Literature">English Literature</option>
+    <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+    <option value="AP CSA">AP CSA</option>
+    <option value="Python Programming">Python Programming</option>
+    <option value="Global History">Global History</option>
+    <option value="Italian">Italian</option>
+    <option value="AP Biology">AP Biology</option>
+  </select>
+  <div id="manageCardsContainer"></div>
+</div>
 
-  <!-- CREATE CARD TAB -->
-  <div id="createTab" class="tabContent hidden">
-    <h2>➕ Create a New Card</h2>
-    <label>
-      Subject:
-      <select id="newSubject">
-        <option value="English Literature">English Literature</option>
-        <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
-        <option value="AP CSA">AP CSA</option>
-        <option value="Python Programming">Python Programming</option>
-        <option value="Global History">Global History</option>
-        <option value="Italian">Italian</option>
-        <option value="AP Biology">AP Biology</option>
-      </select>
-    </label>
-    <br><br>
-    <label>
-      Question:
-      <input type="text" id="newQuestion" placeholder="Enter question" />
-    </label>
-    <br><br>
-    <label>
-      Answer:
-      <input type="text" id="newAnswer" placeholder="Enter answer" />
-    </label>
-    <br><br>
-    <button onclick="addCard()">Add Card</button>
-    <p id="creatorMessage" style="color: gold;"></p>
-  </div>
-
-  <!-- STATS TAB -->
-  <div id="statsTab" class="tabContent hidden">
-    <h2>📊 Stats Dashboard</h2>
-    <button onclick="showStats()">Show My Stats</button>
-    <div id="statsContent"></div>
-  </div>
-
-  <!-- MANAGE CARDS TAB -->
-  <div id="manageTab" class="tabContent hidden">
-    <h2>🛠 Manage Flashcards</h2>
-    <select id="manageSubjectSelect" onchange="loadManageCards()">
-      <option value="all">All Subjects</option>
-      <option value="English Literature">English Literature</option>
-      <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
-      <option value="AP CSA">AP CSA</option>
-      <option value="Python Programming">Python Programming</option>
-      <option value="Global History">Global History</option>
-      <option value="Italian">Italian</option>
-      <option value="AP Biology">AP Biology</option>
-    </select>
-    <div id="manageCardsContainer"></div>
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
