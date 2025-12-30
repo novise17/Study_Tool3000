@@ -24,16 +24,16 @@ function loadCards() {
 }
 
 // --- TAB FUNCTIONALITY ---
-function showTab(tabId) {
+function showTab(tabId, event) {
   const tabs = document.querySelectorAll('.tabContent');
   tabs.forEach(t => t.classList.add('hidden'));
   document.getElementById(tabId).classList.remove('hidden');
 
   const tabButtons = document.querySelectorAll('#tabs button');
   tabButtons.forEach(b => b.classList.remove('activeTab'));
-  event.target.classList.add('activeTab');
+  if(event) event.currentTarget.classList.add('activeTab');
 
-  if (tabId !== 'studyTab' && tabId !== 'quizTab') document.getElementById('card').classList.add('hidden');
+  document.getElementById('card').classList.add('hidden');
 }
 
 // --- STUDY & QUIZ ---
@@ -41,7 +41,7 @@ function startStudy() {
   const selected = document.getElementById("subjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
-  if (dueCards.length === 0) { alert("🎉 No cards due!"); return; }
+  if (!dueCards.length) { alert("🎉 No cards due!"); return; }
   currentCardIndex = 0;
   quizMode = false;
   document.getElementById("card").classList.remove("hidden");
@@ -52,7 +52,7 @@ function startQuiz() {
   const selected = document.getElementById("quizSubjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
-  if (dueCards.length === 0) { alert("🎉 No cards due!"); return; }
+  if (!dueCards.length) { alert("🎉 No cards due!"); return; }
   currentCardIndex = 0;
   quizMode = true;
   quizScore = 0;
@@ -142,7 +142,6 @@ function showStats() {
     bar.className = "efficiencyBar";
     bar.style.width = efficiency + "%";
 
-    // Color code
     if (efficiency >= 80) bar.style.background = "green";
     else if (efficiency >= 50) bar.style.background = "yellow";
     else bar.style.background = "red";
@@ -153,7 +152,7 @@ function showStats() {
   });
 }
 
-// --- FLASHCARD MANAGEMENT ---
+// --- MANAGE CARDS ---
 function loadManageCards() {
   const container = document.getElementById("manageCardsContainer");
   container.innerHTML = "";
@@ -233,6 +232,7 @@ function toggleBrownNoise() {
   }
 }
 
-window.addEventListener('load', () => {
-  try { toggleBrownNoise(); } catch(e) { console.log("AudioContext blocked until user interaction"); }
+// --- AUTO PLAY BROWN NOISE ON LOAD (USER INTERACTION REQUIRED) ---
+window.addEventListener('click', () => {
+  if(!brownNoisePlaying) toggleBrownNoise();
 });
