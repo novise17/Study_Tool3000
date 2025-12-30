@@ -9,17 +9,19 @@
 
   <h1>📚 Study Tool 3000</h1>
 
-  <!-- BROWN NOISE CONTROL -->
-  <div id="brownNoiseControl">
-    <button id="toggleNoiseBtn" onclick="toggleBrownNoise()">🔊 Toggle Brown Noise</button>
+  <!-- THEME TOGGLE & BROWN NOISE -->
+  <div id="topControls">
+    <button id="toggleNoiseBtn" onclick="toggleBrownNoise()">🔊 Brown Noise</button>
+    <button id="toggleThemeBtn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
   </div>
 
   <!-- NAVIGATION TABS -->
   <div id="tabs">
-    <button onclick="showTab('studyTab')">📘 Study</button>
+    <button onclick="showTab('studyTab')" class="activeTab">📘 Study</button>
     <button onclick="showTab('quizTab')">📝 Quiz</button>
     <button onclick="showTab('createTab')">➕ Create Card</button>
     <button onclick="showTab('statsTab')">📊 Stats</button>
+    <button onclick="showTab('manageTab')">🛠 Manage Cards</button>
   </div>
 
   <!-- STUDY TAB -->
@@ -31,6 +33,9 @@
       <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
       <option value="AP CSA">AP CSA</option>
       <option value="Python Programming">Python Programming</option>
+      <option value="Global History">Global History</option>
+      <option value="Italian">Italian</option>
+      <option value="AP Biology">AP Biology</option>
     </select>
     <br><br>
     <button onclick="startStudy()">Start Studying</button>
@@ -45,6 +50,9 @@
       <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
       <option value="AP CSA">AP CSA</option>
       <option value="Python Programming">Python Programming</option>
+      <option value="Global History">Global History</option>
+      <option value="Italian">Italian</option>
+      <option value="AP Biology">AP Biology</option>
     </select>
     <br><br>
     <button onclick="startQuiz()">Start Quiz</button>
@@ -73,6 +81,9 @@
         <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
         <option value="AP CSA">AP CSA</option>
         <option value="Python Programming">Python Programming</option>
+        <option value="Global History">Global History</option>
+        <option value="Italian">Italian</option>
+        <option value="AP Biology">AP Biology</option>
       </select>
     </label>
     <br><br>
@@ -87,7 +98,7 @@
     </label>
     <br><br>
     <button onclick="addCard()">Add Card</button>
-    <p id="creatorMessage" style="color: green;"></p>
+    <p id="creatorMessage" style="color: gold;"></p>
   </div>
 
   <!-- STATS TAB -->
@@ -95,6 +106,22 @@
     <h2>📊 Stats Dashboard</h2>
     <button onclick="showStats()">Show My Stats</button>
     <div id="statsContent"></div>
+  </div>
+
+  <!-- MANAGE CARDS TAB -->
+  <div id="manageTab" class="tabContent hidden">
+    <h2>🛠 Manage Flashcards</h2>
+    <select id="manageSubjectSelect" onchange="loadManageCards()">
+      <option value="all">All Subjects</option>
+      <option value="English Literature">English Literature</option>
+      <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+      <option value="AP CSA">AP CSA</option>
+      <option value="Python Programming">Python Programming</option>
+      <option value="Global History">Global History</option>
+      <option value="Italian">Italian</option>
+      <option value="AP Biology">AP Biology</option>
+    </select>
+    <div id="manageCardsContainer"></div>
   </div>
 
   <script src="script.js"></script>
