@@ -113,3 +113,39 @@ function rateCard(rating) {
 
   loadCard();
 }
+
+// --- ADD NEW CARD ---
+function addCard() {
+  const subject = document.getElementById("newSubject").value;
+  const question = document.getElementById("newQuestion").value.trim();
+  const answer = document.getElementById("newAnswer").value.trim();
+
+  if (!question || !answer) {
+    alert("Please enter both question and answer.");
+    return;
+  }
+
+  const newCard = {
+    subject: subject,
+    question: question,
+    answer: answer,
+    interval: 1,
+    due: Date.now()
+  };
+
+  cards.push(newCard);
+  saveCards();
+
+  // Clear inputs and show confirmation
+  document.getElementById("newQuestion").value = "";
+  document.getElementById("newAnswer").value = "";
+  document.getElementById("creatorMessage").textContent = "✅ Card added!";
+  
+  // Refresh dueCards for current session if studying same subject
+  const selected = document.getElementById("subjectSelect").value;
+  if (selected === "all") {
+    dueCards = cards.filter(c => c.due <= Date.now());
+  } else {
+    dueCards = cards.filter(c => c.due <= Date.now() && c.subject === selected);
+  }
+}
