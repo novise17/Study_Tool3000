@@ -6,6 +6,17 @@ let quizMode = false;
 let quizScore = 0;
 let quizTotal = 0;
 
+// Subject colors for card borders
+const subjectColors = {
+  "English Literature": "red",
+  "Algebra 2 / Trig": "orange",
+  "AP CSA": "yellow",
+  "Python Programming": "green",
+  "Global History": "blue",
+  "Italian": "purple",
+  "AP Biology": "pink"
+};
+
 // --- SAVE & LOAD CARDS ---
 function saveCards() {
   localStorage.setItem("cards", JSON.stringify(cards));
@@ -14,9 +25,7 @@ function saveCards() {
 function loadCards() {
   const saved = localStorage.getItem("cards");
   if (saved) return JSON.parse(saved);
-
-  // Default due: tomorrow (not immediately due)
-  const tomorrow = Date.now() + 86400000;
+  const tomorrow = Date.now() + 86400000; // default due tomorrow
   return [
     { question: "What is a metaphor?", answer: "A comparison without using like or as", subject: "English Literature", interval: 1, due: tomorrow },
     { question: "What is the quadratic formula?", answer: "x = (-b ± √(b²-4ac)) / 2a", subject: "Algebra 2 / Trig", interval: 1, due: tomorrow },
@@ -35,7 +44,7 @@ function initTabs() {
       document.getElementById(tabId).classList.remove('hidden');
       tabButtons.forEach(b => b.classList.remove('activeTab'));
       btn.classList.add('activeTab');
-      if (tabId !== 'studyTab' && tabId !== 'quizTab') document.getElementById('card').classList.add('hidden');
+      if(tabId!=="studyTab" && tabId!=="quizTab") document.getElementById("card").classList.add("hidden");
     });
   });
 }
@@ -45,7 +54,7 @@ window.addEventListener('DOMContentLoaded', initTabs);
 function startStudy() {
   const selected = document.getElementById("subjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
-  if (!dueCards.length) { alert("🎉 No cards due!"); return; }
+  if(!dueCards.length){ alert("🎉 No cards due!"); return; }
   currentCardIndex = 0;
   quizMode = false;
   document.getElementById("card").classList.remove("hidden");
@@ -55,7 +64,7 @@ function startStudy() {
 function startQuiz() {
   const selected = document.getElementById("quizSubjectSelect").value;
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
-  if (!dueCards.length) { alert("🎉 No cards due!"); return; }
+  if(!dueCards.length){ alert("🎉 No cards due!"); return; }
   currentCardIndex = 0;
   quizMode = true;
   quizScore = 0;
@@ -65,12 +74,13 @@ function startQuiz() {
 }
 
 function loadCard() {
-  if (!dueCards.length) {
-    document.getElementById("question").textContent = "🎉 No cards due today!";
-    document.getElementById("subject").textContent = "";
-    document.getElementById("answer").textContent = "";
+  if(!dueCards.length){
+    document.getElementById("question").textContent="🎉 No cards due today!";
+    document.getElementById("subject").textContent="";
+    document.getElementById("answer").textContent="";
     document.getElementById("showBtn").classList.add("hidden");
     document.getElementById("buttons").classList.add("hidden");
+    document.getElementById("card").style.borderColor = "gold";
     return;
   }
   const card = dueCards[currentCardIndex];
@@ -80,67 +90,69 @@ function loadCard() {
   document.getElementById("answer").classList.add("hidden");
   document.getElementById("buttons").classList.add("hidden");
   document.getElementById("showBtn").classList.remove("hidden");
+  document.getElementById("card").style.borderLeft = `5px solid ${subjectColors[card.subject]||"gold"}`;
+  document.getElementById("card").style.borderRight = `5px solid ${subjectColors[card.subject]||"gold"}`;
 }
 
-function showAnswer() {
+function showAnswer(){
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("buttons").classList.remove("hidden");
   document.getElementById("showBtn").classList.add("hidden");
 }
 
-function rateCard(rating) {
+function rateCard(rating){
   let card = dueCards[currentCardIndex];
-  if (!quizMode) {
-    if (rating === "again") card.interval = 1;
-    if (rating === "good") card.interval *= 2;
-    if (rating === "easy") card.interval *= 2.5;
-    card.due = Date.now() + card.interval * 86400000;
+  if(!quizMode){
+    if(rating==="again") card.interval = 1;
+    if(rating==="good") card.interval *=2;
+    if(rating==="easy") card.interval *=2.5;
+    card.due = Date.now() + card.interval*86400000;
     saveCards();
   } else {
-    if (rating === "good" || rating === "easy") quizScore++;
+    if(rating==="good" || rating==="easy") quizScore++;
   }
   currentCardIndex++;
-  if (currentCardIndex >= dueCards.length) {
-    if (quizMode) alert(`🎉 Quiz finished! Score: ${quizScore}/${quizTotal}`);
+  if(currentCardIndex >= dueCards.length){
+    if(quizMode) alert(`🎉 Quiz finished! Score: ${quizScore}/${quizTotal}`);
     currentCardIndex = 0;
   }
   loadCard();
 }
 
-// --- ADD CARD ---
-function addCard() {
+// --- CREATE CARD ---
+function addCard(){
   const subject = document.getElementById("newSubject").value;
   const question = document.getElementById("newQuestion").value.trim();
   const answer = document.getElementById("newAnswer").value.trim();
-  if (!question || !answer) { alert("Please enter both question and answer."); return; }
-  cards.push({ subject, question, answer, interval: 1, due: Date.now() + 86400000 });
+  if(!question || !answer){ alert("Please enter question and answer."); return; }
+  cards.push({subject, question, answer, interval:1, due:Date.now()+86400000});
   saveCards();
-  document.getElementById("newQuestion").value = "";
-  document.getElementById("newAnswer").value = "";
-  document.getElementById("creatorMessage").textContent = "✅ Card added!";
+  document.getElementById("newQuestion").value="";
+  document.getElementById("newAnswer").value="";
+  document.getElementById("creatorMessage").textContent="✅ Card added!";
 }
 
-// --- STATS ---
-function showStats() {
+// --- STATS DASHBOARD ---
+function showStats(){
   const statsContent = document.getElementById("statsContent");
-  statsContent.innerHTML = "";
-  if (!cards.length) { statsContent.innerHTML = "<p>No cards yet!</p>"; return; }
-  const subjects = [...new Set(cards.map(c => c.subject))];
-  subjects.forEach(subject => {
-    const subjectCards = cards.filter(c => c.subject === subject);
-    const total = subjectCards.length;
-    const due = subjectCards.filter(c => c.due <= Date.now()).length;
-    const efficiency = ((total - due) / total * 100).toFixed(1);
+  statsContent.innerHTML="";
+  if(!cards.length){ statsContent.innerHTML="<p>No cards yet!</p>"; return; }
+  const subjects = [...new Set(cards.map(c=>c.subject))];
+  subjects.forEach(sub=>{
+    const subCards = cards.filter(c=>c.subject===sub);
+    const total = subCards.length;
+    const due = subCards.filter(c=>c.due<=Date.now()).length;
+    const eff = ((total-due)/total*100).toFixed(1);
     const div = document.createElement("div");
-    div.innerHTML = `<strong>${subject}</strong>: ${total} cards, ${due} due, Efficiency: ${efficiency}%`;
+    div.innerHTML=`<strong>${sub}</strong>: ${total} cards, ${due} due, Efficiency: ${eff}%`;
     const barContainer = document.createElement("div");
-    barContainer.className = "efficiencyBarContainer";
+    barContainer.className="efficiencyBarContainer";
     const bar = document.createElement("div");
-    bar.className = "efficiencyBar";
-    bar.style.width = efficiency + "%";
-    if (efficiency >= 80) bar.style.background = "green";
-    else if (efficiency >= 50) bar.style.background = "yellow";
-    else bar.style.background = "red";
+    bar.className="efficiencyBar";
+    bar.style.width=eff+"%";
+    if(eff>=80) bar.style.background="green";
+    else if(eff>=50) bar.style.background="yellow";
+    else bar.style.background="red";
     barContainer.appendChild(bar);
     div.appendChild(barContainer);
     statsContent.appendChild(div);
@@ -148,15 +160,15 @@ function showStats() {
 }
 
 // --- MANAGE CARDS ---
-function loadManageCards() {
+function loadManageCards(){
   const container = document.getElementById("manageCardsContainer");
-  container.innerHTML = "";
+  container.innerHTML="";
   const subject = document.getElementById("manageSubjectSelect").value;
-  const filtered = (subject === "all") ? cards : cards.filter(c => c.subject === subject);
-  filtered.forEach((card, i) => {
+  const filtered = (subject==="all")? cards : cards.filter(c=>c.subject===subject);
+  filtered.forEach((card,i)=>{
     const div = document.createElement("div");
-    div.className = "manageCardItem";
-    div.innerHTML = `
+    div.className="manageCardItem";
+    div.innerHTML=`
       <input value="${card.question}" id="q${i}" />
       <input value="${card.answer}" id="a${i}" />
       <button onclick="updateCard(${i})">Update</button>
@@ -166,7 +178,7 @@ function loadManageCards() {
   });
 }
 
-function updateCard(index) {
+function updateCard(index){
   const question = document.getElementById(`q${index}`).value;
   const answer = document.getElementById(`a${index}`).value;
   cards[index].question = question;
@@ -175,53 +187,53 @@ function updateCard(index) {
   alert("✅ Card updated!");
 }
 
-function deleteCard(index) {
-  if (confirm("Delete this card?")) {
-    cards.splice(index, 1);
+function deleteCard(index){
+  if(confirm("Delete this card?")){
+    cards.splice(index,1);
     saveCards();
     loadManageCards();
   }
 }
 
 // --- DARK MODE ---
-function toggleDarkMode() {
+function toggleDarkMode(){
   document.body.classList.toggle("dark");
 }
 
 // --- BROWN NOISE ---
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let brownNoiseNode;
-let brownNoisePlaying = false;
+let brownNoisePlaying=false;
 
-function createBrownNoise() {
-  let bufferSize = 2 * audioCtx.sampleRate;
-  let noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+function createBrownNoise(){
+  let bufferSize = 2*audioCtx.sampleRate;
+  let noiseBuffer = audioCtx.createBuffer(1,bufferSize,audioCtx.sampleRate);
   let output = noiseBuffer.getChannelData(0);
-  let lastOut = 0.0;
-  for (let i = 0; i < bufferSize; i++) {
-    let white = Math.random() * 2 - 1;
-    output[i] = (lastOut + (0.02 * white)) / 1.02;
-    lastOut = output[i];
-    output[i] *= 3.5;
+  let lastOut=0.0;
+  for(let i=0;i<bufferSize;i++){
+    let white = Math.random()*2-1;
+    output[i]=(lastOut + (0.02*white))/1.02;
+    lastOut=output[i];
+    output[i]*=3.5;
   }
   let noise = audioCtx.createBufferSource();
-  noise.buffer = noiseBuffer;
-  noise.loop = true;
-  let gainNode = audioCtx.createGain();
-  gainNode.gain.value = 0.2;
+  noise.buffer=noiseBuffer;
+  noise.loop=true;
+  let gainNode=audioCtx.createGain();
+  gainNode.gain.value=0.2;
   noise.connect(gainNode).connect(audioCtx.destination);
-  return { noise, gainNode };
+  return {noise,gainNode};
 }
 
-function toggleBrownNoise() {
-  if (!brownNoisePlaying) {
-    brownNoiseNode = createBrownNoise();
+function toggleBrownNoise(){
+  if(!brownNoisePlaying){
+    brownNoiseNode=createBrownNoise();
     brownNoiseNode.noise.start();
-    brownNoisePlaying = true;
-    document.getElementById("toggleNoiseBtn").textContent = "🔇 Brown Noise";
+    brownNoisePlaying=true;
+    document.getElementById("toggleNoiseBtn").textContent="🔇 Brown Noise";
   } else {
     brownNoiseNode.noise.stop();
-    brownNoisePlaying = false;
-    document.getElementById("toggleNoiseBtn").textContent = "🔊 Brown Noise";
+    brownNoisePlaying=false;
+    document.getElementById("toggleNoiseBtn").textContent="🔊 Brown Noise";
   }
 }
