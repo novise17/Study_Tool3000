@@ -36,3 +36,15 @@ button {
   margin-bottom: 10px;
   font-size: 14px;
 }
+
+/* Brown Noise Control */
+#brownNoiseControl {
+  margin: 15px auto;
+  text-align: center;
+}
+
+#brownNoiseControl button {
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
