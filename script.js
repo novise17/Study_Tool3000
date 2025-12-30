@@ -29,9 +29,11 @@ function showTab(tabId) {
   tabs.forEach(t => t.classList.add('hidden'));
   document.getElementById(tabId).classList.remove('hidden');
 
-  if (tabId !== 'studyTab' && tabId !== 'quizTab') {
-    document.getElementById('card').classList.add('hidden');
-  }
+  const tabButtons = document.querySelectorAll('#tabs button');
+  tabButtons.forEach(b => b.classList.remove('activeTab'));
+  event.target.classList.add('activeTab');
+
+  if (tabId !== 'studyTab' && tabId !== 'quizTab') document.getElementById('card').classList.add('hidden');
 }
 
 // --- STUDY & QUIZ ---
@@ -40,7 +42,6 @@ function startStudy() {
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
   if (dueCards.length === 0) { alert("🎉 No cards due!"); return; }
-
   currentCardIndex = 0;
   quizMode = false;
   document.getElementById("card").classList.remove("hidden");
@@ -52,7 +53,6 @@ function startQuiz() {
   dueCards = (selected === "all") ? cards.filter(c => c.due <= Date.now()) : cards.filter(c => c.due <= Date.now() && c.subject === selected);
 
   if (dueCards.length === 0) { alert("🎉 No cards due!"); return; }
-
   currentCardIndex = 0;
   quizMode = true;
   quizScore = 0;
@@ -62,7 +62,7 @@ function startQuiz() {
 }
 
 function loadCard() {
-  if (dueCards.length === 0) {
+  if (!dueCards.length) {
     document.getElementById("question").textContent = "🎉 No cards due today!";
     document.getElementById("subject").textContent = "";
     document.getElementById("answer").textContent = "";
@@ -75,7 +75,6 @@ function loadCard() {
   document.getElementById("subject").textContent = "📘 " + card.subject;
   document.getElementById("question").textContent = card.question;
   document.getElementById("answer").textContent = card.answer;
-
   document.getElementById("answer").classList.add("hidden");
   document.getElementById("buttons").classList.add("hidden");
   document.getElementById("showBtn").classList.remove("hidden");
@@ -89,7 +88,6 @@ function showAnswer() {
 
 function rateCard(rating) {
   let card = dueCards[currentCardIndex];
-
   if (!quizMode) {
     if (rating === "again") card.interval = 1;
     if (rating === "good") card.interval *= 2;
@@ -102,10 +100,9 @@ function rateCard(rating) {
 
   currentCardIndex++;
   if (currentCardIndex >= dueCards.length) {
-    if (quizMode) alert(`🎉 Quiz finished!\nScore: ${quizScore}/${quizTotal}`);
+    if (quizMode) alert(`🎉 Quiz finished! Score: ${quizScore}/${quizTotal}`);
     currentCardIndex = 0;
   }
-
   loadCard();
 }
 
@@ -114,26 +111,19 @@ function addCard() {
   const subject = document.getElementById("newSubject").value;
   const question = document.getElementById("newQuestion").value.trim();
   const answer = document.getElementById("newAnswer").value.trim();
-
   if (!question || !answer) { alert("Please enter both question and answer."); return; }
-
   cards.push({ subject, question, answer, interval: 1, due: Date.now() });
   saveCards();
-
   document.getElementById("newQuestion").value = "";
   document.getElementById("newAnswer").value = "";
   document.getElementById("creatorMessage").textContent = "✅ Card added!";
 }
 
-// --- STATS DASHBOARD WITH EFFICIENCY BARS ---
+// --- STATS DASHBOARD ---
 function showStats() {
-  let statsContent = document.getElementById("statsContent");
+  const statsContent = document.getElementById("statsContent");
   statsContent.innerHTML = "";
-
-  if (cards.length === 0) {
-    statsContent.innerHTML = "<p>No cards yet!</p>";
-    return;
-  }
+  if (!cards.length) { statsContent.innerHTML = "<p>No cards yet!</p>"; return; }
 
   const subjects = [...new Set(cards.map(c => c.subject))];
   subjects.forEach(subject => {
@@ -152,11 +142,57 @@ function showStats() {
     bar.className = "efficiencyBar";
     bar.style.width = efficiency + "%";
 
+    // Color code
+    if (efficiency >= 80) bar.style.background = "green";
+    else if (efficiency >= 50) bar.style.background = "yellow";
+    else bar.style.background = "red";
+
     barContainer.appendChild(bar);
     div.appendChild(barContainer);
-
     statsContent.appendChild(div);
   });
+}
+
+// --- FLASHCARD MANAGEMENT ---
+function loadManageCards() {
+  const container = document.getElementById("manageCardsContainer");
+  container.innerHTML = "";
+  const subject = document.getElementById("manageSubjectSelect").value;
+  const filtered = (subject === "all") ? cards : cards.filter(c => c.subject === subject);
+
+  filtered.forEach((card, i) => {
+    const div = document.createElement("div");
+    div.className = "manageCardItem";
+    div.innerHTML = `
+      <input value="${card.question}" id="q${i}" />
+      <input value="${card.answer}" id="a${i}" />
+      <button onclick="updateCard(${i})">Update</button>
+      <button onclick="deleteCard(${i})">Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateCard(index) {
+  const question = document.getElementById(`q${index}`).value;
+  const answer = document.getElementById(`a${index}`).value;
+  cards[index].question = question;
+  cards[index].answer = answer;
+  saveCards();
+  alert("✅ Card updated!");
+}
+
+function deleteCard(index) {
+  if (confirm("Delete this card?")) {
+    cards.splice(index, 1);
+    saveCards();
+    loadManageCards();
+  }
+}
+
+// --- DARK MODE ---
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
 }
 
 // --- BROWN NOISE ---
@@ -189,15 +225,14 @@ function toggleBrownNoise() {
     brownNoiseNode = createBrownNoise();
     brownNoiseNode.noise.start();
     brownNoisePlaying = true;
-    document.getElementById("toggleNoiseBtn").textContent = "🔇 Turn Brown Noise Off";
+    document.getElementById("toggleNoiseBtn").textContent = "🔇 Brown Noise";
   } else {
     brownNoiseNode.noise.stop();
     brownNoisePlaying = false;
-    document.getElementById("toggleNoiseBtn").textContent = "🔊 Turn Brown Noise On";
+    document.getElementById("toggleNoiseBtn").textContent = "🔊 Brown Noise";
   }
 }
 
 window.addEventListener('load', () => {
-  try { toggleBrownNoise(); } 
-  catch(e) { console.log("AudioContext blocked until user interaction"); }
+  try { toggleBrownNoise(); } catch(e) { console.log("AudioContext blocked until user interaction"); }
 });
