@@ -78,5 +78,22 @@ button {
 }
 
 #statsContent div {
-  margin: 5px 0;
+  margin: 10px 0;
+  text-align: left;
+}
+
+.efficiencyBarContainer {
+  background: #e0e0e0;
+  border-radius: 8px;
+  width: 80%;
+  height: 20px;
+  margin-top: 5px;
+}
+
+.efficiencyBar {
+  height: 100%;
+  border-radius: 8px;
+  background: #4caf50;
+  width: 0%;
+  transition: width 0.5s;
 }
