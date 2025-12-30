@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Tool 3000</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
   <h1>📚 Study Tool 3000</h1>
@@ -9,14 +16,14 @@
 
   <!-- NAVIGATION TABS -->
   <div id="tabs">
-    <button onclick="showTab('study')">📘 Study</button>
-    <button onclick="showTab('quiz')">📝 Quiz</button>
-    <button onclick="showTab('create')">➕ Create Card</button>
-    <button onclick="showTab('stats')">📊 Stats</button>
+    <button onclick="showTab('studyTab')">📘 Study</button>
+    <button onclick="showTab('quizTab')">📝 Quiz</button>
+    <button onclick="showTab('createTab')">➕ Create Card</button>
+    <button onclick="showTab('statsTab')">📊 Stats</button>
   </div>
 
-  <!-- STUDY MENU -->
-  <div id="study" class="tabContent">
+  <!-- STUDY TAB -->
+  <div id="studyTab" class="tabContent active">
     <h2>📚 Choose a Subject</h2>
     <select id="subjectSelect">
       <option value="all">All Subjects</option>
@@ -27,6 +34,19 @@
     </select>
     <br><br>
     <button onclick="startStudy()">Start Studying</button>
+  </div>
+
+  <!-- QUIZ TAB -->
+  <div id="quizTab" class="tabContent hidden">
+    <h2>📝 Quiz Mode</h2>
+    <select id="quizSubjectSelect">
+      <option value="all">All Subjects</option>
+      <option value="English Literature">English Literature</option>
+      <option value="Algebra 2 / Trig">Algebra 2 / Trig</option>
+      <option value="AP CSA">AP CSA</option>
+      <option value="Python Programming">Python Programming</option>
+    </select>
+    <br><br>
     <button onclick="startQuiz()">Start Quiz</button>
   </div>
 
@@ -43,8 +63,8 @@
     </div>
   </div>
 
-  <!-- CARD CREATOR -->
-  <div id="create" class="tabContent hidden">
+  <!-- CREATE CARD TAB -->
+  <div id="createTab" class="tabContent hidden">
     <h2>➕ Create a New Card</h2>
     <label>
       Subject:
@@ -63,4 +83,20 @@
     <br><br>
     <label>
       Answer:
-      <input type="text" id="newAnswe
+      <input type="text" id="newAnswer" placeholder="Enter answer" />
+    </label>
+    <br><br>
+    <button onclick="addCard()">Add Card</button>
+    <p id="creatorMessage" style="color: green;"></p>
+  </div>
+
+  <!-- STATS TAB -->
+  <div id="statsTab" class="tabContent hidden">
+    <h2>📊 Stats Dashboard</h2>
+    <button onclick="showStats()">Show My Stats</button>
+    <div id="statsContent"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
